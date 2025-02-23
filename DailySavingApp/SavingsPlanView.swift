@@ -5,13 +5,18 @@ struct SavingsPlanView: View {
     let totalDays: Int
     
     @State private var remainingDays: Int
-    @State private var savedAmounts: [Int] = []
+    @State private var savedAmounts: [Int] = [] {
+        didSet {
+            saveData()
+        }
+    }
 
     
     init(savingsGoal: Int, totalDays: Int) {
         self.savingsGoal = savingsGoal
         self.totalDays = totalDays
         _remainingDays = State(initialValue: totalDays)
+        _savedAmounts = State(initialValue: UserDefaults.standard.array(forKey: "savedAmounts") as? [Int] ?? [])
     }
 
     
@@ -37,20 +42,35 @@ struct SavingsPlanView: View {
             }
             .padding()
 
-            List(savedAmounts, id: \.self) { amount in
-                Text("Saved: \(amount) kr")
+            List(savedAmounts.indices, id: \.self) { index in
+                Text("Day \(index + 1): Saved \(savedAmounts[index]) kr")
             }
         }
         .padding()
+        .onAppear(perform: loadData)
     }
 
     
     func generateDailyAmount() {
         if remainingDays > 0 {
             let remainingAmount = savingsGoal - totalSaved
-            let dailyAmount = max(1, remainingAmount / remainingDays) // Minsta belopp 1 kr
+            let maxDailyLimit = min(750, remainingAmount - (remainingDays - 1))
+            let dailyAmount = Int.random(in: 1...maxDailyLimit)
+            
             savedAmounts.append(dailyAmount)
             remainingDays -= 1
+            saveData()
+            
+        }
+    }
+    
+    func saveData() {
+        UserDefaults.standard.set(savedAmounts, forKey: "savedAmounts")
+    }
+    
+    func loadData() {
+        if let loadedData = UserDefaults.standard.array(forKey: "savedAmounts") as? [Int] {
+            savedAmounts = loadedData
         }
     }
 }
