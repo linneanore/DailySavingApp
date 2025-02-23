@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var savingsGoal: String = ""
     @State private var selectedTimeframe: String = "Days"
+    @State private var timeFrameValue: String = ""
     @State private var timeframes = ["Days", "Weeks", "Months"]
     @State private var savingsPlanStarted = false
     
@@ -25,12 +26,20 @@ struct ContentView: View {
                     .keyboardType(.numberPad)
                     .padding(.horizontal, 40)
                 
-                Picker("Timeframe", selection: $selectedTimeframe) {
-                    ForEach(timeframes, id: \..self) {
-                        Text($0)
+                HStack {
+                    TextField("Enter number", text: $timeFrameValue)
+                        .padding()
+                        .background(Color.white.opacity(0.9))
+                        .cornerRadius(10)
+                        .keyboardType(.numberPad)
+                    
+                    Picker("Timeframe", selection: $selectedTimeframe) {
+                        ForEach(timeframes, id: \..self) {
+                            Text($0)
+                        }
                     }
+                    .pickerStyle(MenuPickerStyle())
                 }
-                .pickerStyle(SegmentedPickerStyle())
                 .padding(.horizontal, 40)
                 
                 Button(action: startSavingsPlan) {
