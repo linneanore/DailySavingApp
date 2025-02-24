@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    var addPlan: ((SavingsPlan) -> Void)?
     @State private var savingsGoal: String = ""
     @State private var selectedTimeframe: String = "Days"
     @State private var timeFrameValue: String = ""
@@ -45,8 +46,9 @@ struct ContentView: View {
 
                     
                     Button(action: {
-                        if let _ = Int(savingsGoal), let _ = Int(timeFrameValue) {
-                            navigateToSavingsPlan = true
+                        if let goal = Int(savingsGoal), let days = Int(timeFrameValue), goal > 0, days > 0 {
+                            let newPlan = SavingsPlan(savingsGoal: goal, totalDays: calculateTotalDays())
+                            addPlan?(newPlan)
                         }
                     }) {
                         Text("Start Savings Plan")

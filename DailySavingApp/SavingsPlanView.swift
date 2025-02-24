@@ -3,6 +3,7 @@ import SwiftUI
 struct SavingsPlanView: View {
     let savingsGoal: Int
     let totalDays: Int
+    var removePlan: (() -> Void)?
     
     @State private var remainingDays: Int
     @State private var savedAmounts: [Int] = [] {
@@ -39,6 +40,17 @@ struct SavingsPlanView: View {
                     .background(Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
+                
+                Button(action: {
+                    removePlan?()
+                }) {
+                    Text("Delete Savings Plan")
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
             }
             .padding()
 
